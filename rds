@@ -1,1 +1,353 @@
+step 1:-
+ec2 launch—os—key pair—n/w setting allow—launch—connect to putty 
+
+step 2:-
+Rds—database—-create database—choose database creation methods select (standard create)—Engine option (mysql) —Edition (my sql community) — engine version (8.0.30) —templates(free tier)—availability and durability— 
+---setting database instance identifier (database-1) —credential settings master username(admin)—master pw—confirm pw—instance configuration (db.t3.micro) —storage storage type(general purpose SSD (gp2) —allocated storage(20)—
+storage autoscaling (enable storage autoscaling) —maximum storage threshold (1000 GB)—connectivity computer resource(don’t connect to EC2 computer resource) —vpc—subnet group—public access (no)—vpc security group firewall (choose existing) --
+—database authentication (pw authentication) —create database 
+
+step 3:-
+ rds security group add ec2 security group.............
+
+sudo yum install nginx -y
+sudo service nginx start
+sudo service nginx status
+sudo dnf install mariadb105-server -y
+sudo service mariadb start
+sudo service mariadb status
+sudo dnf install httpd wget php-fpm php-mysqli php-json php php-devel
+sudo service php-fpm start
+sudo service php-fpm status
+
+sudo service nginx restart
+sudo service mariadb restart
+sudo service php-fpm restart
+
+cd /usr/share/nginx/html
+sudo nano index.php                               <form action=”/submit.php” method=”post”> 
+<?php 
+echo‖php is running‖; 
+?>, code put 
+Copy& paste code in 
+nano index.php       
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: black;
+}
+
+* {
+ box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+ padding: 16px;
+ background-color: white;
+}
+
+/* Full width input fields */
+input[type=text], input[type=password] {
+ width: 100%;
+ padding: 15px;
+ margin: 5px 0 22px 0;
+ display: inline-block;
+ border:none;
+ background:#f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+ background-color: #ddd;
+ outline: none;
+}
+
+/* Overwrite default styles of hr*/
+hr{
+ border: 1px solid #f1f1f1;
+ margin-bottom: 25px;
+}
+
+/*Set a style for the submit button*/
+.registerbtn {
+ background-color: #04AA6D;
+ color: white;
+ padding: 16px 20px;
+ margin:8px 0;
+ border: none;
+ width: 100%;
+ opacity: 0.9;
+}
+
+.registerbtn:hover {
+opacity: 1;
+}
+
+a {
+ color:dodgerblue;
+}
+
+/*Set a grey background color and center the text of the "sign in" section*/
+.signin {
+ background-color: #f1f1f1;
+ text-align:center;
+}
+</style>
+</head>
+<body>
+
+<form action="/submit.php" method="post">
+<div class="container">
+<h1>Register</h1>
+<p>Please fill in this form to create an account.</p>
+<hr>
+
+<label for="email"><b>Email</b></label>
+<input type="text" placehlder="Enter Email"name="email" id="email" required>
+
+<label for="psw"><b>Password</b></label>
+<input type="password"placeholder="Enter Password" name="psw" id="psw"required>
+
+<label for="psw-repeat"><b>Repeat Password</b></label>
+<input type="password"placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+<hr>
+<p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+
+<button type="submit"class="registerbtn">Register</button>
+</div>
+
+<div class="container signin">
+<p>Already have an account?<a href="#">Sign in</a>.</p>
+</div>
+</form>
+
+</body>
+</html>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sudo nano submit.php     
+<?php
+
+$eml= $_POST['email'];
+$psw=$_POST['psw'];
+echo "test";
+echo $eml;
+echo $psw;
+
+$servername ="database-1.c3btidp7ylu1.ap-south-1.rds.amazonaws.com";
+$username ="admin";
+$password ="Pass1235";
+$dbname ="facebook";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+ die("Connection failed:".$conn->connect_error);
+}
+
+$sql="INSERT INTO posts (email,password)
+VALUES ('$eml','$psw')";
+
+if($conn->query($sql) === TRUE) {
+ echo "New record created successfully";
+}else {
+ echo "Error:". $sql. "<br>" . $conn->error;
+}
+
+$conn->close();
+?>
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sudo mysql –u admin –h endpoint –p   
+Pw name  toch password jo rds la dila 
+Create database facebook; 
+Use facebook; 
+Create table posts(id int not null primary key auto_increment, email varchar(200), password varchar(200)); 
+Exit 
+Sudo nano submit.php… changes…data fill…rds la check aal ki nhi tr 
+(servername, username, pw, dbname , insert into table name(posts)….fill index.php 
+Sudo mysql –u admin –h endpoint –p 
+Pw 
+Use facebook; 
+Select * from posts; 
+
+ip copy and browser see (ip/index.php)
+_____________________________________________________________________________________________________________________________________________________________________________________
+FOR EBS:-
+
+EBS:-Images and video save . jya vedes ebs madhun s3 la save hoil tevha ebs madhal delete pn kru shakto beacause storage vadhate mhnun. 
+S3 la save sathi permission  lagt beacause s3 vpc chya baher aahe 
+Ec2-user 
+Lemp install …refresh all 
+Cd /usr/share/nginx/html 
+For EBS:- ebs does not require permission , only folder create to save image or video. 
+sudo nano fileadd.html 
+
+<!DOCTYPE html>
+<html>
+  <body>
+     <form action="upload.php" method="post" enctype="multipart/form-data">
+        select image to upload:
+        <input type="file" name="fileToUpload" id="fileToUpload">
+           <input type="submit" value="Upload Image" name="submit">
+     </form>
+   </body>
+</html>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sudo nano upload.php
+<?php
+$target_dir = "uploads/";
+$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+//Check if image file is a actual image or fake image
+if(isset($_POST["submit"])) {
+  $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+  if($check !== false) {
+   echo "File is an image - " . $check["mime"] .".";
+   $uploadOk = 1;
+  } else {
+    echo "File is not an image.";
+    $uploadOk = 0;
+  }
+}
+
+//Check if file already exists
+if (file_exists($target_file)) {
+  echo "Sorry, file already exists.";
+  $uploadOk = 0;
+}
+
+//Check file size
+if ($_FILES["fileToUpload"]["size"] > 5000000) {
+  echo "Sorry, your file is too large.";
+  $uploadOk = 0;
+}
+
+//Allow certain file formats
+if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpg"
+&& $imageFileType != "gif") {
+  echo "Sorry, only JPG, JPEG, PNG & files are allowed.";
+  $uploadOk = 0;
+}
+
+//Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+  echo "Sorry, your file was not uploaded.";
+//if everything is ok, try to upload file
+ } else {
+  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+  echo "The file ". htmlspecialchars(basename($_FILES["fileToUpload"]["name"]))." has been uploaded.";
+ } else {
+  echo "Sorry, there was an error uploading your file.";
+ }
+}
+?>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sudo mkdir uploads
+
+ls -l
+chmod –R 777 uploads 
+browser browse upload and check (ip/fileadd.html)
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+FOR s3:-
+s3 require permission because it is out of VPC. It require IAM access key, secret key. 
+acl enabled bucket create 
+sudo nano fileadd.html (modify file) 
+<!DOCTYPE html>
+<html>
+    <body>
+        
+        <form action="ups3.php" method="post" enctype="multipart/form-data">
+            Select image to upload:
+            <input type="file" name="anyfile" id="anyfile">
+                <input type="submit" value="Upload Image" name="submit">
+        </form>
+        
+    </body>
+</html>
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sudo nano ups3.php
+
+<?php
+require 'vendor/autoload.php';
+use Aws\S3\S3Client;
+// Instantiate an Amazon S3 client.
+$s3Client = new S3Client([
+'version' => 'latest',
+'region'  => 'ap-south-1',
+'credentials' => [
+'key'    => '***********',     //Add your access key here
+'secret' => '**************'  //Add your secret key here
+]
+]);
+// Check if the form was submitted
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+// Check if file was uploaded without errors
+if(isset($_FILES["anyfile"]) && $_FILES["anyfile"]["error"] == 0){
+$allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+$filename = $_FILES["anyfile"]["name"];
+$filetype = $_FILES["anyfile"]["type"];
+$filesize = $_FILES["anyfile"]["size"];
+// Validate file extension
+$ext = pathinfo($filename, PATHINFO_EXTENSION);
+if(!array_key_exists($ext, $allowed)) die("Error: Please select a valid file format.");
+// Validate file size - 10MB maximum
+$maxsize = 10 * 1024 * 1024;
+if($filesize > $maxsize) die("Error: File size is larger than the allowed limit.");
+// Validate type of the file
+if(in_array($filetype, $allowed)){
+// Check whether file exists before uploading it
+if(file_exists("uploads/" . $filename)){
+echo $filename . " is already exists.";
+} else{
+if(move_uploaded_file($_FILES["anyfile"]["tmp_name"], "uploads/" . $filename)){
+$bucket = '*********';              //Add your bucket name here
+$file_Path = __DIR__ . '/uploads/'. $filename;
+$key = basename($file_Path);
+try {
+$result = $s3Client->putObject([
+'Bucket' => $bucket,
+'Key'    => $key,
+'Body'   => fopen($file_Path, 'r'),
+'ACL'    => 'public-read', // make file 'public'
+]);
+echo "Image uploaded successfully. Image path is: ". $result->get('ObjectURL');
+} catch (Aws\S3\Exception\S3Exception $e) {
+echo "There was an error uploading the file.\n";
+echo $e->getMessage();
+}
+echo "Your file was uploaded successfully.";
+}else{
+echo "File is not uploaded";
+}
+} 
+} else{
+echo "Error: There was a problem uploading your file. Please try again."; 
+}
+} else{
+echo "Error: " . $_FILES["anyfile"]["error"];
+}
+}
+?>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+to download sdk............
+ sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+ sudo php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+ sudo php composer-setup.php
+ sudo php -r "unlink('composer-setup.php');"
+ 
+  sudo php  composer.phar require aws/aws-sdk-php
+sudo service php-fpm restart 
+Sudo service nginx restart 
+
+ip copy paste on browser/fileadd.html
+______________________________________________________________________________________________________________________________________________________________________________________________
 
